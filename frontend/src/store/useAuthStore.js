@@ -3,7 +3,11 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+// SOCKET_BASE: prefer explicit VITE_SOCKET_URL, otherwise derive from VITE_API_URL
+// Default to deployed Render origin when not provided
+const RENDER_ORIGIN = "https://talksy-chatapp-18xy.onrender.com";
+const SOCKET_BASE = import.meta.env.VITE_SOCKET_URL
+  || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "") : RENDER_ORIGIN);
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -21,8 +25,14 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
-      console.log("Error in checkAuth:", error);
-      set({ authUser: null });
+      // If the user is not authenticated, the server returns 401.
+      // Treat 401 as "not logged in" and avoid noisy console output.
+      if (error?.response?.status === 401) {
+        set({ authUser: null });
+      } else {
+        console.error("Error in checkAuth:", error);
+        set({ authUser: null });
+      }
     } finally {
       set({ isCheckingAuth: false });
     }
@@ -86,7 +96,7 @@ export const useAuthStore = create((set, get) => ({
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
-    const socket = io(BASE_URL, {
+    const socket = io(SOCKET_BASE, {
       query: {
         userId: authUser._id,
       },

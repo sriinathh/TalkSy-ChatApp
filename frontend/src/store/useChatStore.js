@@ -16,7 +16,12 @@ export const useChatStore = create((set, get) => ({
       const res = await axiosInstance.get("/messages/users");
       set({ users: res.data });
     } catch (error) {
-      toast.error(error.response.data.message);
+      // If unauthorized, user is not logged in — avoid noisy toast messages.
+      if (error?.response?.status === 401) {
+        set({ users: [] });
+      } else {
+        toast.error(error.response?.data?.message || "Could not load users");
+      }
     } finally {
       set({ isUsersLoading: false });
     }
