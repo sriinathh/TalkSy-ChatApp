@@ -16,10 +16,8 @@ if (typeof window !== "undefined") {
   };
 }
 
-// API base URL: use relative path in production (same origin), absolute in dev
-const BASE_URL = import.meta.env.MODE === "development"
-  ? "http://localhost:5001/api"
-  : "/api";
+// Always use relative /api — in dev Vite proxies to Render, in production it's same-origin
+const BASE_URL = "/api";
 
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,

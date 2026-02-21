@@ -3,10 +3,8 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-// SOCKET_BASE: use relative path in production (same origin), absolute in dev
-const SOCKET_BASE = import.meta.env.MODE === "development"
-  ? "http://localhost:5001"
-  : "/";
+// Always use relative path — in dev Vite proxies to Render, in production it's same-origin
+const SOCKET_BASE = "/";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
