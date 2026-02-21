@@ -26,8 +26,11 @@ export const useAuthStore = create((set, get) => ({
       // Treat 401 as "not logged in" and avoid noisy console output.
       if (error?.response?.status === 401) {
         set({ authUser: null });
+      } else if (error?.response?.status) {
+        console.error(`Auth check failed with status ${error.response.status}:`, error.response.data);
+        set({ authUser: null });
       } else {
-        console.error("Error in checkAuth:", error);
+        console.error("Error in checkAuth:", error.message);
         set({ authUser: null });
       }
     } finally {
