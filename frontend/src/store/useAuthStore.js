@@ -3,11 +3,8 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-// SOCKET_BASE: prefer explicit VITE_SOCKET_URL, otherwise derive from VITE_API_URL
-// Default to deployed Render origin when not provided
-const RENDER_ORIGIN = "https://talksy-chatapp-18xy.onrender.com";
-const SOCKET_BASE = import.meta.env.VITE_SOCKET_URL
-  || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "") : RENDER_ORIGIN);
+// SOCKET_BASE: use Render backend
+const SOCKET_BASE = "https://talksy-chatapp-18xy.onrender.com";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,

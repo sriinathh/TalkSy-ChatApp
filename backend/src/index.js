@@ -22,8 +22,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowed = [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:5174"]
-        .filter(Boolean);
+      const allowed = [process.env.CLIENT_URL].filter(Boolean);
       if (!origin) return callback(null, true);
       if (allowed.indexOf(origin) !== -1) {
         return callback(null, true);
