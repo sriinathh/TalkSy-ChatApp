@@ -101,6 +101,13 @@ export const useAuthStore = create((set, get) => ({
         userId: authUser._id,
       },
     });
+    socket.io.opts = socket.io.opts || {};
+    // ensure cookies are sent for cross-site socket connections
+    socket.io.opts.withCredentials = true;
+    socket.io.opts.transports = socket.io.opts.transports || ["websocket", "polling"];
+    socket.on("connect_error", (err) => {
+      console.error("Socket connect error:", err);
+    });
     socket.connect();
 
     set({ socket: socket });
