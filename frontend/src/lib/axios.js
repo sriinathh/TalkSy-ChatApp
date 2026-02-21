@@ -16,9 +16,13 @@ if (typeof window !== "undefined") {
   };
 }
 
-// API base URL: use Render backend
+// API base URL: use relative path in production (same origin), absolute in dev
+const BASE_URL = import.meta.env.MODE === "development"
+  ? "http://localhost:5001/api"
+  : "/api";
+
 export const axiosInstance = axios.create({
-  baseURL: "https://talksy-chatapp-18xy.onrender.com/api",
+  baseURL: BASE_URL,
   withCredentials: true,
   timeout: 10000,
 });

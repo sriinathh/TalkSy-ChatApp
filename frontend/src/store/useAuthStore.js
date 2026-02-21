@@ -3,8 +3,10 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-// SOCKET_BASE: use Render backend
-const SOCKET_BASE = "https://talksy-chatapp-18xy.onrender.com";
+// SOCKET_BASE: use relative path in production (same origin), absolute in dev
+const SOCKET_BASE = import.meta.env.MODE === "development"
+  ? "http://localhost:5001"
+  : "/";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,

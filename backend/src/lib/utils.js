@@ -8,8 +8,7 @@ export const generateToken = (userId, res) => {
   const cookieOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000, // MS
     httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-    // Allow cross-site cookies in production when frontend is served from a different origin
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
   };
 
