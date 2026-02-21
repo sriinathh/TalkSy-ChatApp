@@ -97,20 +97,20 @@ export const useAuthStore = create((set, get) => ({
     if (!authUser || get().socket?.connected) return;
 
     const socket = io(SOCKET_BASE, {
-      query: {
-        userId: authUser._id,
-      },
+      query: { userId: authUser._id },
+      withCredentials: true,
+      transports: ["websocket", "polling"],
     });
-    socket.io.opts = socket.io.opts || {};
-    // ensure cookies are sent for cross-site socket connections
-    socket.io.opts.withCredentials = true;
-    socket.io.opts.transports = socket.io.opts.transports || ["websocket", "polling"];
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+
     socket.on("connect_error", (err) => {
       console.error("Socket connect error:", err);
     });
-    socket.connect();
 
-    set({ socket: socket });
+    set({ socket });
 
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
