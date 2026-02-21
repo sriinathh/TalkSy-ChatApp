@@ -5,13 +5,21 @@ export const generateToken = (userId, res) => {
     expiresIn: "7d",
   });
 
-  res.cookie("jwt", token, {
+  const cookieOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000, // MS
     httpOnly: true, // prevent XSS attacks cross-site scripting attacks
     // Allow cross-site cookies in production when frontend is served from a different origin
     sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     secure: process.env.NODE_ENV === "production",
-  });
+  };
+
+  console.log(`[TOKEN] Generating JWT for user: ${userId}`);
+  console.log(`[TOKEN] NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`[TOKEN] Cookie options:`, cookieOptions);
+
+  res.cookie("jwt", token, cookieOptions);
+
+  console.log(`[TOKEN] JWT cookie set successfully`);
 
   return token;
 };

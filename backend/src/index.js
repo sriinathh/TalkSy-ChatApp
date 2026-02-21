@@ -19,6 +19,17 @@ const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log(`  Cookies:`, Object.keys(req.cookies));
+  if (req.cookies.jwt) {
+    console.log(`  JWT Token present: ${req.cookies.jwt.substring(0, 20)}...`);
+  }
+  next();
+});
+
 app.use(
   cors({
     origin: function (origin, callback) {
