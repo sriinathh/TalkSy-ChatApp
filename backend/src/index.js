@@ -17,7 +17,8 @@ dotenv.config();
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 
 // Request logging middleware
@@ -34,22 +35,32 @@ app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests from CLIENT_URL and localhost for development
-      const allowed = [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"].filter(Boolean);
-      
+      // Also allow Cloudinary and other CDNs
+      const allowed = [
+        process.env.CLIENT_URL,
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://res.cloudinary.com",
+        "https://fonts.googleapis.com",
+        "https://fonts.gstatic.com",
+      ].filter(Boolean);
+
       // Allow requests without origin (native apps, curl, etc.)
       if (!origin) return callback(null, true);
-      
+
       // Check if origin is in the allowed list
       if (allowed.includes(origin)) {
         return callback(null, true);
       }
-      
+
       console.warn(`CORS request rejected from origin: ${origin}`);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Content-Type"],
+    maxAge: 86400,
   })
 );
 
